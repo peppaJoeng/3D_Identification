@@ -16,12 +16,10 @@ opt.tol = 1e-8;
 % transformation
 [Transform, ~] = cpd_register(X,Y,opt);
 
-
-opt.thred = 2000;
 result = splitModel(X, Transform.Y, opt, Transform.sigma2, result_dir);
 
 [~, len] = size(result);
-disp(len);
+disp(['Now aggregate the ', num2str(len), ' block results']);
 distance = 0;
 for i = 1 : len
     distance = distance + compute_dis(result{1,i});

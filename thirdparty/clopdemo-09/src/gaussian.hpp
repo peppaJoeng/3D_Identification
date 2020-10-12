@@ -118,10 +118,10 @@ namespace cp
 #pragma endregion
 
 
-	/// Gaussian distribution with center µ, covariance cov and measure weight
+	/// Gaussian distribution with center u, covariance cov and measure weight
 	struct Gaussian
 	{
-		vec3 µ;			/// mean
+		vec3 u;			/// mean
 		smat3 cov;		/// covariance
 		float weight;	/// weight
 
@@ -132,7 +132,7 @@ namespace cp
 		}
 
 		// Ctor
-		Gaussian(const vec3& µ, const smat3& cov, float weight = 1.0f) : µ(µ), cov(cov), weight(weight)
+		Gaussian(const vec3& u, const smat3& cov, float weight = 1.0f) : u(u), cov(cov), weight(weight)
 		{
 		}
 
@@ -146,14 +146,14 @@ namespace cp
 		{
 			// TOOD: fuse det and inverse computation
 			float d = det(cov);
-			vec3 diff = X - µ;
+			vec3 diff = X - u;
 			
 			return expf(-0.5f * dot(diff, inverse(cov) * diff)) / sqrtf(248.0502134f * d);
 		}
 
 
 		// returns the product Gaussian resulting from multiplication of this with another weighted Gaussian (weights are not ignored). 
-		// the resulting Gaussian has according µ, cov and weight. (MatrixCookbook)
+		// the resulting Gaussian has according u, cov and weight. (MatrixCookbook)
 		Gaussian operator* (const Gaussian& g) const
 		{
 			// TODO: Optimize (det and inverse)
@@ -163,12 +163,12 @@ namespace cp
 
 			smat3 inv_cov0 = inverse(cov);
 			smat3 inv_cov1 = inverse(g.cov);
-			vec3 d = µ - g.µ;
+			vec3 d = u - g.u;
 
 			Gaussian product;
 			product.weight = weight * g.weight * preFac * exp(-0.5f * dot(d, invCovSum * d));
 			product.cov = inverse(inv_cov0 + inv_cov1);
-			product.µ = product.cov * (inv_cov0 * µ + inv_cov1 * g.µ);
+			product.u = product.cov * (inv_cov0 * u + inv_cov1 * g.u);
 
 			return product;
 		}
@@ -180,14 +180,14 @@ namespace cp
 	// Kullback-Leibler distance between two Gaussians
 	inline float KLD(const Gaussian& gc, const Gaussian& gp)
 	{
-		return 0.5f * (SMD(gc.µ, gp.µ, gp.cov) + trace(inverse(gp.cov) * gc.cov) - 3.0f - log(det(gc.cov) / det(gp.cov)));
+		return 0.5f * (SMD(gc.u, gp.u, gp.cov) + trace(inverse(gp.cov) * gc.cov) - 3.0f - log(det(gc.cov) / det(gp.cov)));
 	}
 
 
 	// Bhattacharyya distance between two Gaussians
 	inline float DBhatt(const Gaussian& g1, const Gaussian& g2)
 	{
-		return 0.25f * SMD(g1.µ, g2.µ, g1.cov + g2.cov) + 0.5f * logf(det(g1.cov + g2.cov)) - 0.25f * logf(det(g1.cov) * det(g2.cov)) - 1.03972077f;	// dim/2 * ln(2)
+		return 0.25f * SMD(g1.u, g2.u, g1.cov + g2.cov) + 0.5f * logf(det(g1.cov + g2.cov)) - 0.25f * logf(det(g1.cov) * det(g2.cov)) - 1.03972077f;	// dim/2 * ln(2)
 	}
 
 	// applies the given linear transformationo T on the Gaussian. The weight is left unaffected.
@@ -198,7 +198,7 @@ namespace cp
 		// for the covariance transformation, only the rotational part is relevant
 		mat3 rot = T.toMat3();
 		gT.cov = rot * g.cov.toMat3() * transpose(rot);
-		gT.µ = (T * vec4(g.µ, 1)).xyz();
+		gT.u = (T * vec4(g.u, 1)).xyz();
 		gT.weight = g.weight;
 
 		return gT;

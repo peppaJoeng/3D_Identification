@@ -56,9 +56,9 @@ namespace cp
 			for (uint i = 0; i < mixture.size(); ++i)
 			{
 				const Component& c = mixture[i];
-				ply << c.µ.x << "  ";
-				ply << c.µ.y << "  ";
-				ply << c.µ.z << "  ";
+				ply << c.u.x << "  ";
+				ply << c.u.y << "  ";
+				ply << c.u.z << "  ";
 				ply << c.cov.e00 << "  ";
 				ply << c.cov.e01 << "  ";
 				ply << c.cov.e02 << "  ";
@@ -154,7 +154,7 @@ namespace cp
 					else if (readData && counter++ < componentCount)
 					{
 						Component c;
-						vec3 µ;
+						vec3 u;
 						smat3 cov;
 						float w;
 						vec3 nvar;
@@ -165,9 +165,9 @@ namespace cp
 
 							switch (header[i])
 							{
-							case X: µ.x = val; break;
-							case Y: µ.y = val; break;
-							case Z: µ.z = val; break;
+							case X: u.x = val; break;
+							case Y: u.y = val; break;
+							case Z: u.z = val; break;
 							case COVXX: cov.e00 = val; break;
 							case COVXY: cov.e01 = val; break;
 							case COVXZ: cov.e02 = val; break;
@@ -183,7 +183,7 @@ namespace cp
 							pos1 = line.find_first_not_of(" \n\r\t", pos2);
 							pos2 = line.find_first_of(" \n\r\t", pos1);
 						}
-						mixture.push_back(Component(Gaussian(µ, cov, w), nvar));
+						mixture.push_back(Component(Gaussian(u, cov, w), nvar));
 					}
 					// "end_header"
 					else if (line.substr(pos1, pos2 - pos1).compare("end_header") == 0)

@@ -16,6 +16,7 @@
 #pragma once
 
 #include "base.hpp"
+#include <math.h>
 #include <sstream>
 #include <iostream>
 #define FLT_MAX 3.402823466e+38F

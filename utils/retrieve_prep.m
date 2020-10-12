@@ -2,7 +2,8 @@ function result_dir = retrieve_prep(path)
 %PREPROCESS 此处显示有关此函数的摘要
 %   此处显示详细说明
 pathsave = pwd;
-utils_path = mfilename('fullpath'); [pathstr, ~, ~] = fileparts(utils_path);
+utils_path = mfilename('fullpath'); 
+[pathstr, ~, ~] = fileparts(utils_path);
 cd (pathstr);
 cd ..;
 

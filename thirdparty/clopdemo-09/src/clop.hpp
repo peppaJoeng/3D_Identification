@@ -47,7 +47,7 @@ namespace cp
 			bool	interleaveRepulsion = true;		// use interleaved repulsion from the CLOP paper (recommended)
 			float	repulsionRadiusFac = 0.5f;		// repulsion kernel radius factor for kernel cutoff (1 - full repulsion, 0 - no repulsion). recommended value is ~ 0.5
 			bool	useSoftEta = true;				// uses the more gently decreasing eta = -r from Huang et al. instead of the original eta = 1/(3r³) from Lipman et al. (recommended)
-			float	mu = 0.4f;						// balancing factor between attraction and repulsion forces; E = attracion + µ * repulsion, µ \in [0, 0.5]
+			float	mu = 0.4f;						// balancing factor between attraction and repulsion forces; E = attracion + u * repulsion, u \in [0, 0.5]
 			bool	useDiscreteLOP = false;			// ignores Gaussian covariances for comparison purposes. applies original WLOP using the Gaussian centers for singular attraction only.
 		};
 
@@ -66,7 +66,7 @@ namespace cp
 			// create Index of Gaussians in the mixture
 			vector<vec3> gaussianCenters(nGaussians);
 			for (uint i = 0; i < nGaussians; ++i)
-				gaussianCenters[i] = mixture->at(i).µ;
+				gaussianCenters[i] = mixture->at(i).u;
 			float maxSearchRadius = params.doubleInitRadius ? 2 * params.kernelRadius : params.kernelRadius;
 			PointIndex mixtureIndex(gaussianCenters, maxSearchRadius);
 			
@@ -188,7 +188,7 @@ namespace cp
 					//------------------------------------------------------
 
 					// TRANSFORM: centralize the point q around the Gaussian
-					vec3 c = g.µ - q;
+					vec3 c = g.u - q;
 					
 					// Accumulate		
 					vec3 xW(0.0f, 0.0f, 0.0f);
@@ -246,7 +246,7 @@ namespace cp
 					//------------------------------------------------------
 
 					// transform: centralize the point q around the Gaussian
-					vec3 c = g.µ - q;
+					vec3 c = g.u - q;
 										
 					// Lambda = Gaussian cov + isotropic kernel cov
 					smat3 Lambda = g.cov + smat3(var_k, 0, 0, var_k, 0, var_k);
@@ -339,7 +339,7 @@ namespace cp
 				{
 					const Gaussian& g = mixture[nidx];
 
-					vec3 diff = g.µ - q;
+					vec3 diff = g.u - q;
 					float squaredDistance = dot(diff, diff);
 
 					float alpha = expf(minus_16_over_h2 * squaredDistance);

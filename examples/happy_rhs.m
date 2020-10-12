@@ -2,7 +2,7 @@ clear all; close all; clc;
 
 addpath(genpath('../../../core'));
 addpath(genpath('../../../ModelNet10'));
-addpath(genpath('../../../../inexact_alm_rpca'));
+addpath(genpath('../thirdparty/CPD2/core'));
 addpath(genpath('./utils'));
 
 % N > M

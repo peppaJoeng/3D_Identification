@@ -18,3 +18,8 @@ thirdparty/CPD2/examples
 thirdparty/CPD2/core/Nonrigid
 data
 *.mat
+*.csv
+*test.m*
+.idea
+test.m
+tests.m

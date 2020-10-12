@@ -23,7 +23,13 @@ end
 % 将模型均匀分为num份，其中每一份点数最大不超过thred
 [N, ~] = size(X);
 [M, ~] = size(Y);
-num = ceil(max(N, M) / opt.thred);
+% 是否需要切割
+if opt.split
+    num = ceil(max(N, M) / opt.thred);
+else
+    num = 1;
+end
+
 n = floor(N / num);
 m = floor(M / num);
 if opt.debug
@@ -57,18 +63,16 @@ function A = compute_result(x, y, sigma2, opt, paths, num)
         write_off([paths.Y_path, '/part_', num2str(num), '.off'], y);
     end
     p = resbonsibility(x, y, sigma2, opt);
-    [A, ok]= rpca(p, num, paths.rpca_path, opt);
+    A= rpca(p, num, paths.rpca_path, opt);
 end
 
-function [A, ok]= rpca(p, i, rpca_path, opt)
-    ok = 1;
+function A = rpca(p, i, rpca_path, opt)
     disp('inexact_alm_rpca');
     tic;
     try
         [A, ~, ~] = inexact_alm_rpca(p');
     catch
         disp("error occur!! Treat it as completely unmatched.")
-        ok = 0;
         return;
     end
     if opt.debug

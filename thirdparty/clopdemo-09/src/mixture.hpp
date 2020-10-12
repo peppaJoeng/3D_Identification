@@ -202,7 +202,7 @@ namespace cp
 
 				// setup component
 				float inv_w = 1.0f / nnIndices.size();		// size > 0 ensured
-				c.µ = q;
+				c.u = q;
 				c.cov = sumcov * inv_w - smat3::outer(mean * inv_w - q);	// consider parent pos centralization
 				c.cov = conditionCov(c.cov);
 				c.weight = params.useWeightedPotentials ? 1.0f / density : 1.0f;
@@ -226,10 +226,10 @@ namespace cp
 #if CLOP_DEBUG
 			for (uint i = 0; i < size(); ++i)
 			{
-				const vec3& µ = at(i).µ;
+				const vec3& u = at(i).u;
 				const smat3& cov = at(i).cov;
-				if (isnan(µ) || det(cov) <= 0 || isnan(det(cov)))
-					cerr << "[initMixture] Error @ initial component " << i << ": µ = " << µ << ", cov = " << cov << ", det = " << det(cov) << endl;
+				if (isnan(u) || det(cov) <= 0 || isnan(det(cov)))
+					cerr << "[initMixture] Error @ initial component " << i << ": u = " << u << ", cov = " << cov << ", det = " << det(cov) << endl;
 			}
 #endif
 		}
@@ -237,10 +237,10 @@ namespace cp
 
 		float hemLikelihood(const Gaussian& parent, const Gaussian& child)
 		{
-			vec3 µ_diff = parent.µ - child.µ;
+			vec3 u_diff = parent.u - child.u;
 			smat3 pCovInv = inverse(parent.cov);
 
-			float smd = dot(µ_diff, pCovInv * µ_diff);
+			float smd = dot(u_diff, pCovInv * u_diff);
 			smat3 ipcCov = pCovInv * child.cov;
 			float ipcTrace = ipcCov.e00 + ipcCov.e11 + ipcCov.e22;
 
@@ -267,7 +267,7 @@ namespace cp
 				const Component& c = at(i);
 
 				// prepare centers to be indexed
-				centers[i] = c.µ;
+				centers[i] = c.u;
 
 				// select parents
 				if (c.is_parent)
@@ -298,7 +298,7 @@ namespace cp
 				const Gaussian& parent = at(s);
 				
 				vector<uint> resultSet;
-				index.radiusSearch(parent.µ, queryRadii[s_], resultSet);
+				index.radiusSearch(parent.u, queryRadii[s_], resultSet);
 
 				// select eligible children from the conservative resultSet
 				for (uint i_ = 0; i_ < resultSet.size(); ++i_)
@@ -307,11 +307,11 @@ namespace cp
 					const Component& child = at(i);
 
 
-					float kld = KLD(child, Gaussian(parent.µ, parent.cov));
+					float kld = KLD(child, Gaussian(parent.u, parent.cov));
 
 					if (kld > params.alpha * params.alpha * 0.5f)
-						//if ( squaredMahalanobisDist( child.?µ - parent.?µ, parent.cov ) > params.alpha*params.alpha )
-						//if (!child.delta && squaredMahalanobisDist( child.?µ - parent.?µ, parent.cov ) > params.alpha * params.alpha)
+						//if ( squaredMahalanobisDist( child.?u - parent.?u, parent.cov ) > params.alpha*params.alpha )
+						//if (!child.delta && squaredMahalanobisDist( child.?u - parent.?u, parent.cov ) > params.alpha * params.alpha)
 						continue;
 
 					// the only parent allowed to merge is the parent s itself
@@ -359,7 +359,7 @@ namespace cp
 
 				// initialize parent info
 				float w_s = 0.0f;
-				vec3 sumµ_i(0, 0, 0);
+				vec3 sumu_i(0, 0, 0);
 				smat3 sumcov_i(0, 0, 0, 0, 0, 0);
 				vec3 resultant(0, 0, 0);
 				float nvar = 0.0f;
@@ -389,16 +389,16 @@ namespace cp
 					
 					// accumulate
 					w_s += w;
-					sumµ_i += w * child.µ;
-					sumcov_i += w * (child.cov + smat3::outer(child.µ - parent.µ));	// accumulates generic cov relative to parent µ, numerically more stable than origin, due to smaller distances
+					sumu_i += w * child.u;
+					sumcov_i += w * (child.cov + smat3::outer(child.u - parent.u));	// accumulates generic cov relative to parent u, numerically more stable than origin, due to smaller distances
 					resultant += w * c_normal;
 					nvar += w * c_nvar;
 				}
 
 				// normalize and condition new cov matrix
 				float inv_w = 1.0f / w_s;		// w_s > 0 is certain
-				vec3 µ_s = inv_w * sumµ_i;
-				smat3 cov_s = inv_w * sumcov_i - smat3::outer(µ_s - parent.µ);
+				vec3 u_s = inv_w * sumu_i;
+				smat3 cov_s = inv_w * sumcov_i - smat3::outer(u_s - parent.u);
 				cov_s = conditionCov(cov_s);
 
 				// mixture of normals
@@ -411,7 +411,7 @@ namespace cp
 
 				// Add new component to output list
 				Component newComponent;
-				newComponent.µ = µ_s;
+				newComponent.u = u_s;
 				newComponent.cov = cov_s;
 				newComponent.weight = w_s;
 				newComponent.nvar = newMeanNormal * (variance1 + variance2);
@@ -434,10 +434,10 @@ namespace cp
 #if CLOP_DEBUG
 			for (uint i = 0; i < newComponents.size(); ++i)
 			{
-				const vec3& µ = newComponents[i].µ;
+				const vec3& u = newComponents[i].u;
 				const smat3& cov = newComponents[i].cov;
-				if (isnan(µ) || det(cov) <= 0 || isnan(det(cov)))
-					cerr << "[clusterLevel] Error @ new component " << i << ": µ = " << µ << ", cov = " << cov << ", det = " << det(cov) << endl;
+				if (isnan(u) || det(cov) <= 0 || isnan(det(cov)))
+					cerr << "[clusterLevel] Error @ new component " << i << ": u = " << u << ", cov = " << cov << ", det = " << det(cov) << endl;
 			}
 #endif
 		}

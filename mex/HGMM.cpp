@@ -79,9 +79,9 @@ HEM(const double *x, const int N, const int D, const int &nLevels, const string 
     auto *HGMMPoints = new PointSet(Mix->size());
     auto *tmp = (float *) HGMMPoints->data();
     for (auto g : *Mix) {
-        *tmp++ = g.µ.x;
-        *tmp++ = g.µ.y;
-        *tmp++ = g.µ.z;
+        *tmp++ = g.u.x;
+        *tmp++ = g.u.y;
+        *tmp++ = g.u.z;
     }
     cout << "After clustering, Mixture's number: " << Mix->size() << endl;
     nanooff::savePointCloud(filename_H, (float *) HGMMPoints->data(), HGMMPoints->size());
