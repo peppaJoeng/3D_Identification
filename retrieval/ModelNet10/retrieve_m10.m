@@ -12,31 +12,31 @@ load(modelnet10path);
 d_result_path = 'dis_result_m10_3.csv';
 p_result_path = 'path_result_m10_3.csv';
 
-d = [];
+d = zeros(3, 3);
 for i = 1:3
     X = read_mesh(meshes.path(i));
     clax = meshes.cla(i);
     
-    dist = [];
+    dist = zeros(1, 3);
     for j = 1:3
         if j == i
-            dist(end + 1) =  0;
+            dist(j) =  0;
             continue;
         end
         Y = read_mesh(meshes.path(j));
         opt.debug = 0;
-        opt.max_it = 150;
+        opt.max_it = 130;
         opt.viz = 0;
         opt.split = 0;
         % only if set split flag
         opt.thred = 2000;
         try
-            dist(end+1) = Identification(X, Y, opt, ['../../result/', num2str(i), num2str(j)]);
+            dist(j) = Identification(X, Y, opt, ['../../result/', num2str(i), num2str(j)]);
         catch
-            dist(end+1) = 10000000000;
+            dist(j) = 10000000000;
         end
     end
-    d = [d; dist];
+    d(i, :) = dist;
 end
 
 writematrix(d, d_result_path); 

@@ -6,7 +6,7 @@ addpath(genpath('../../thirdparty/CPD2/core'));
 addpath(genpath('../../thirdparty/inexact_alm_rpca'));
 addpath(genpath('../../mex'));
 
-hm25path = '../../model/mHM25.mat';
+hm25path = '../../model/HM25.mat';
 load(hm25path);
 
 [~, meshes_num] = size(meshes.path);
