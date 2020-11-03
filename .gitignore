@@ -16,7 +16,7 @@ thirdparty/clopdemo-09/vs2013
 thirdparty/CPD2/data
 thirdparty/CPD2/examples
 thirdparty/CPD2/core/Nonrigid
-data
+data/*
 *.mat
 *.csv
 *test.m*

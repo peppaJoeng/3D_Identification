@@ -52,5 +52,5 @@ function retrieve_hm5(block_num)
         pathmat(i ,:) = meshes.path(I(i,:));
     end
 
-    writematrix(pathd, p_result_path);
+    writematrix(pathmat, p_result_path);
 end
