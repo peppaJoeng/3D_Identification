@@ -4,14 +4,15 @@ addpath(genpath('../core'));
 addpath(genpath('../utils'));
 addpath(genpath('../thirdparty/CPD2/core'));
 
-source_path = '../model/xyzrgb_dragon-100k.ply';
+%source_path = '../model/xyzrgb_dragon-100k.ply';
+source_path = '../data/HM25/bathtub/test/bathtub_0148.off';
 result_dir = preprocess(source_path);
 
 diary([result_dir, '/log.txt']);
 diary on;
 
 X = read_mesh(source_path);
-X = downsample(X,0.01);
+% X = downsample(X,0.01);
 Y = X;
 
 [N, D] = size(X); 
@@ -21,7 +22,9 @@ X = s * X + repmat(t', N, 1);
 
 opt.max_it = 20;
 opt.debug = 1;
-opt.viz = 0; 
+opt.viz = 1;
+opt.split = 0;
+opt.thred = 200;
 distance = Identification(X, Y, opt, result_dir);
 
 diary off;
