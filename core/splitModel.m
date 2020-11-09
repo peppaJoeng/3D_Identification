@@ -24,7 +24,7 @@ end
 [N, ~] = size(X);
 [M, ~] = size(Y);
 % 是否需要切割
-if opt.split
+if opt.segment
     num = ceil(max(N, M) / opt.thred);
 else
     num = 1;
@@ -39,20 +39,39 @@ if opt.debug
 end
 
 %% compute rpca result each block
-result = cell(1, num);
+result = zeros(1, num);
 for i = 1 : num - 1
     x = X((i - 1) * n + 1 :  n * i, :, :);
     y = Y((i - 1) * m + 1 :  m * i, :, :);
-    result{1,i} = compute_result(x, y, sigma2, opt, paths, i);
+    result(i) = compute_result(x, y, sigma2, opt, paths, i);
 end
 
 x = X((num - 1) * n + 1 : end, :, :);
 y = Y((num - 1) * m + 1 : end, :, :);
-result{1,num} = compute_result(x, y, sigma2, opt, paths, num);
+result(num) = compute_result(x, y, sigma2, opt, paths, num);
 end
 
-%% util function
-function A = compute_result(x, y, sigma2, opt, paths, num)
+%% compute result
+function dis = compute_result(x, y, sigma2, opt, paths, num)
+    switch opt.metric
+        case "LR"
+            dis = LR_result(x, y, sigma2, opt, paths, num);
+            disp(['using LR : ', num2str(dis)]);
+        case "KURT"
+            dis = kurto_result(x, y, sigma2, opt);
+            disp(['using KURT : ', num2str(dis)]);
+        case "CORR"
+            dis = corr_result(x, y, sigma2, opt);
+            disp(['using CORR : ', num2str(dis)]);
+        otherwise
+            warning('Unexpected metric type.');
+            return;
+    end
+end
+
+
+%% low rank function
+function dis = LR_result(x, y, sigma2, opt, paths, num)
     if opt.debug
         % 将xy分块比较结果保存为jpg图片格式
         % savePic(num2str(k), [block_path, '/part_', num2str(k)], x, y);
@@ -64,17 +83,13 @@ function A = compute_result(x, y, sigma2, opt, paths, num)
     end
     p = resbonsibility(x, y, sigma2, opt);
     A= rpca(p, num, paths.rpca_path, opt);
+    dis = compute_dis(A);
 end
 
 function A = rpca(p, i, rpca_path, opt)
     disp('inexact_alm_rpca');
     tic;
-    try
-        [A, ~, ~] = inexact_alm_rpca(p');
-    catch
-        disp("error occur!! Treat it as completely unmatched.")
-        return;
-    end
+    [A, ~, ~] = inexact_alm_rpca(p');
     if opt.debug
         inexact = figure('name',['A_', num2str(i)]);
         plot(A(:,1));
@@ -83,6 +98,28 @@ function A = rpca(p, i, rpca_path, opt)
     disptime(toc);
 end
 
+%% kurtosis
+function dis = kurto_result(x, y, sigma2, opt)
+    p = resbonsibility(x, y, sigma2, opt);
+    [~, N] = size(p);
+    kur = kurtosis(p);
+    dis = sum(kur) / N;
+end
+
+
+%% corresponse
+function dis = corr_result(x, y, sigma2, opt)
+    C = correspondence(x, y, sigma2, opt);
+    [M, ~] = size(y);
+    
+    yy = zeros(M,3);
+    for i = 1 : M
+        yy(i, :) = x(C(i), :);
+    end
+    dis = corr2(y, yy);
+end
+
+%% save fucntion
 function savePic(pic_name, store_name, x, y)
     pic = figure('Name',pic_name);
     disp(['===========The ', pic_name, 'th part==========']);
@@ -99,6 +136,7 @@ function saveFig(pic_name, store_name, x, y)
     saveas(pic,store_name,'fig');
 end
 
+%% prepare function
 function checkAndMkdir(dirname)
     if exist(dirname,'dir')
         rmdir(dirname, 's');
@@ -106,6 +144,7 @@ function checkAndMkdir(dirname)
     mkdir(dirname);
 end
 
+%% spilt fucntion
 function [X_new, Y_new] = sort_By_Longest_Axis(X, Y, opt)
     if opt.debug
         disp(['max value of X coordiantes : ', num2str(max(X))]);
@@ -133,6 +172,7 @@ function [X_new, Y_new] = sort_By_Longest_Axis(X, Y, opt)
     
 end
 
+%% compute probability
 function P = resbonsibility(X, Y, sigma2, opt)
     % X and Y must normalize to zero mean and unit variance
     [X, Y, ~]=cpd_normalize(X,Y); 
@@ -140,3 +180,10 @@ function P = resbonsibility(X, Y, sigma2, opt)
     P = postProbablity(X, Y, sigma2, opt.outliers);
 end
 
+%% compute correspondence
+function C = correspondence(X, Y, sigma2, opt)
+    % X and Y must normalize to zero mean and unit variance
+    [X, Y, ~]=cpd_normalize(X,Y); 
+    % comupte resbonsibility
+    C=cpd_Pcorrespondence(X, Y, sigma2,opt.outliers);
+end

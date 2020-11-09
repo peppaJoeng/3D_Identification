@@ -5,6 +5,10 @@ addpath(genpath('../thirdparty/CPD2/core'));
 addpath(genpath('../thirdparty/inexact_alm_rpca'));
 addpath(genpath('../mex'));
 
+if nargin < 4 && opt.debug == 0
+    result_dir = '';
+end
+
 opt.method = 'rigid';
 opt.outliers = 0;
 opt.normalize = 1;
@@ -22,7 +26,7 @@ result = splitModel(X, Transform.Y, opt, Transform.sigma2, result_dir);
 disp(['Now aggregate the ', num2str(len), ' block results']);
 distance = 0;
 for i = 1 : len
-    distance = distance + compute_dis(result{1,i});
+    distance = distance + result(i);
 end
 
 end
