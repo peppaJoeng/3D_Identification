@@ -18,10 +18,8 @@ source_path = '../model/frequent/bun_zipper_res4.ply';
 des_path = '../model/stanford 3D/dragon_recon/dragon_vrip_res4.ply';
 % des_path = '../model/frequent/bun_zipper_res3.ply';
 % des_path = '../model/frequent/bun_zipper_res4.ply';
-X = read_mesh(source_path);
-Y = read_mesh(des_path);
-% Y = X;
-
+%des_path = '../model/stanford 3D/dragon_recon/dragon_vrip_res4.ply';
+des_path = '../model/frequent/bun_zipper_res3.ply';
 % % b453 b 453
 % [N, D] = size(X);
 % % generate target point set
