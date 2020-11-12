@@ -4,7 +4,6 @@ function retrieve_hm(library_path, query_path, store_name, block, block_num, met
     addpath(genpath('../../thirdparty/CPD2/core'));
     addpath(genpath('../../thirdparty/inexact_alm_rpca'));
     addpath(genpath('../../mex'));
-
     
     load(library_path, 'meshes');
     libs = meshes; 

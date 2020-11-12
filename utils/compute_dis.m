@@ -3,6 +3,6 @@ function distance = compute_dis(rpca)
 %   此处显示详细说明
 dis = rpca(:,1);
 dist = abs(dis);
-distance = sum(dist);
+distance = mean(dist);
 end
 
