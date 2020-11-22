@@ -63,6 +63,17 @@ function dis = compute_result(x, y, sigma2, opt, paths, num)
         case "CORR"
             dis = corr_result(x, y, sigma2, opt);
             disp(['using CORR : ', num2str(dis)]);
+        case "ALL"
+            dis_LR = LR_result(x, y, sigma2, opt, paths, num);
+            dis_KURT = kurto_result(x, y, sigma2, opt);
+            dis_CORR = corr_result(x, y, sigma2, opt);
+            
+            disp(['using LR : ', num2str(dis_LR)]);
+            disp(['using KURT : ', num2str(dis_KURT)]);
+            disp(['using CORR : ', num2str(dis_CORR)]);
+            save(opt.savename, 'dis_LR', 'dis_KURT', 'dis_CORR');
+            
+            dis = -789456123;
         otherwise
             warning('Unexpected metric type.');
             return;
