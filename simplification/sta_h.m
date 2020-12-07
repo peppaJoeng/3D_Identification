@@ -7,7 +7,7 @@ addpath(genpath('../thirdparty/inexact_alm_rpca'));
 addpath(genpath('../mex'));
 
 % N > M
-source_path = '../model/frequent/statuette.ply';
+source_path = '../model/frequent/statuette_rst.ply';
 des_path = '../model/frequent/statuette.ply';
 result_dir = preprocess(source_path);
 
@@ -17,8 +17,8 @@ diary on;
 X = read_mesh(source_path);
 Y = read_mesh(des_path);
 
-X = HGMM(X, 20,[result_dir,'/X'], 20);
-Y = HGMM(Y, 20,[result_dir,'/Y'], 20);
+X = HGMM(X, 20,[result_dir,'/X'], 50);
+Y = HGMM(Y, 20,[result_dir,'/Y'], 50);
 
 disp(size(X));
 disp(size(Y));
@@ -28,7 +28,7 @@ opt.debug = 1;
 opt.viz = 0; 
 opt.segment = 0;
 opt.metric = "ALL";
-opt.savename = "lucy_hgmm.mat";
+opt.savename = "sta_hgmm.mat";
 
 distance = Identification(X, Y, opt, result_dir);
 

@@ -7,7 +7,7 @@ addpath(genpath('../thirdparty/inexact_alm_rpca'));
 addpath(genpath('../mex'));
 
 % N > M
-source_path = '../model/frequent/lucy_million.ply';
+source_path = '../model/frequent/lucy_million_rst.ply';
 des_path = '../model/frequent/lucy_million.ply';
 result_dir = preprocess(source_path);
 
@@ -18,7 +18,7 @@ X = read_mesh(source_path);
 Y = read_mesh(des_path);
 
 X = downsample(X, 0.05);
-X = downsample(X, 0.05);
+Y = downsample(Y, 0.05);
 
 disp(size(X));
 disp(size(Y));
