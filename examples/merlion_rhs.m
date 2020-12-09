@@ -1,11 +1,12 @@
 clear all; close all; clc;
 
-addpath(genpath('../../../core'));
-addpath(genpath('../../../ModelNet10'));
-addpath(genpath('../../../../inexact_alm_rpca'));
+addpath(genpath('../core'));
+addpath(genpath('../utils'));
+addpath(genpath('../thirdparty/CPD2/core'));
+addpath(genpath('../mex'));
 
 % N > M
-source_path = '../model/Merlion2.obj';
+source_path = '../model/frequent/Merlion2.obj';
 result_dir = ['result_s/', source_path(10:end-4)];
 disp(result_dir);
 
@@ -21,20 +22,21 @@ end
 diary([result_dir, '/log.txt']);
 diary on;
 
-[X, ~] = read_obj(source_path);
+X = read_mesh(source_path);
 Y = X;
-disp(X);
 
 R = cpd_R(rand(1),rand(1),rand(1));
 [N, D] = size(X); 
 t = rand(D, 1);
 X = rand(1) * X * R' + repmat(t', N, 1);
 
-X = HGMM(X, 3, [result_dir,'/X'], true, 0.9, 2.5, 3);
-Y = HGMM(Y, 3, [result_dir,'/Y'], true, 0.9, 2.5, 3);
+% X = HGMM(X, 3,[result_dir,'/X'], 3);
+Y = HGMM(Y, 3,[result_dir,'/Y'], 3.5);
+%write_off('Merlion_hX.off',X);
+write_off('Merlion_hY.off',Y);
 disp(size(X));
 disp(size(Y));
-
+%{
 opt.method = 'rigid';
 opt.viz = 1;
 opt.outliers = 0;
@@ -57,5 +59,5 @@ saveas(after,[result_dir,'/after'],'jpg');
 
 thred = 4000;
 splitModel(X, Transform.Y, opt, result_dir, Transform.sigma2, thred);
-
+%}
 diary off;
