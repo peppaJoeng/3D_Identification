@@ -7,11 +7,12 @@ addpath(genpath('../thirdparty/inexact_alm_rpca'));
 addpath(genpath('../mex'));
 
 % N > M
-source_path = '../model/frequent/Merlion2.obj';
-des_path = '../model/frequent/Merlion2.obj';
-result_dir = preprocess(source_path);
+source_path = '../data/Merlion/Merlion_similaritytransform_number1.obj';
+des_path = '../data/Merlion/Merlion.obj';
 
-diary([result_dir, '/log_base.txt']);
+result_dir = 'base';
+mkdir(result_dir);
+diary('log_base.txt');
 diary on;
 
 X = read_mesh(source_path);

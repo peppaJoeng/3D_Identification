@@ -74,6 +74,15 @@ function dis = compute_result(x, y, sigma2, opt, paths, num)
             save(opt.savename, 'dis_LR', 'dis_KURT', 'dis_CORR');
             
             dis = -789456123;
+        case "KC"
+            dis_KURT = kurto_result(x, y, sigma2, opt);
+            dis_CORR = corr_result(x, y, sigma2, opt);
+            
+            disp(['using KURT : ', num2str(dis_KURT)]);
+            disp(['using CORR : ', num2str(dis_CORR)]);
+            save(opt.savename, 'dis_KURT', 'dis_CORR');
+            
+            dis = -987654321;
         otherwise
             warning('Unexpected metric type.');
             return;
