@@ -23,7 +23,7 @@ opt.tol = 1e-8;
 result = splitModel(X, Transform.Y, opt, Transform.sigma2, result_dir);
 
 [~, len] = size(result);
-disp(['Now aggregate the ', num2str(len), ' block results']);
+% disp(['Now aggregate the ', num2str(len), ' block results']);
 distance = 0;
 for i = 1 : len
     distance = distance + result(i);

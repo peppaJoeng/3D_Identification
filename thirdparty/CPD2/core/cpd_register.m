@@ -132,13 +132,14 @@ normal.xscale=1; normal.yscale=1;
 % Normalize to zero mean and unit variance
 if opt.normalize, [X,Y,normal]=cpd_normalize(X,Y); end;
 
-disp(['%%%%% Starting CPD-' upper(opt.method) ' registration. %%%' ]); tic;
+% disp(['%%%%% Starting CPD-' upper(opt.method) ' registration. %%%' ]); 
+tic;
 
 %%%% Choose the method and start CPD point-set registration
 switch lower(opt.method)
     case 'rigid'
         [C, R, t, s, sigma2, iter, T]=cpd_rigid(X,Y, opt.rot, opt.scale, opt.max_it, opt.tol, opt.viz, opt.outliers, opt.fgt, opt.corresp, opt.sigma2);
-       case 'affine'
+    case 'affine'
         [C, R, t, sigma2, iter, T]=cpd_affine(X,Y, opt.max_it, opt.tol, opt.viz, opt.outliers, opt.fgt, opt.corresp, opt.sigma2); s=1;
     case 'nonrigid'
         [C, W, sigma2, iter, T] =cpd_GRBF(X, Y, opt.beta, opt.lambda, opt.max_it, opt.tol, opt.viz, opt.outliers, opt.fgt, opt.corresp, opt.sigma2);    

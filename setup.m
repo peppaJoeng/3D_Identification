@@ -1,10 +1,12 @@
 function setup()
 
 psave=pwd; p = mfilename('fullpath'); [pathstr, ~, ~] = fileparts(p);
+disp(pathstr)
 disp('Compiling Identification Mex functions...');
 disp('If this is the first time you use mex, it will ask you to choose a compiler.');
 disp('Just choose the matlab default one (usually option #1).');
 cd (pathstr); cd mex;
+disp(pathstr);
 
 %% Compile the downsampling function and calculate the posterior probability function
 try

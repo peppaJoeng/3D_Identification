@@ -181,7 +181,7 @@ function [X_new, Y_new] = sort_By_Longest_Axis(X, Y, opt)
         max_length = y_length;
         axis = y_axis;
     end
-    disp(['the longest axis is ', num2str(axis), ' whose length is ', num2str(max_length)]);
+%     disp(['the longest axis is ', num2str(axis), ' whose length is ', num2str(max_length)]);
     if max_length == 1
         X_new = sortrows(X);
         Y_new = sortrows(Y);
