@@ -19,7 +19,8 @@ We will introduce several directories.
 - util: some utilization function used in our method such as reading mesh.
 - watermarking: the code used to test watermarking models.
 - setup.m: used to prepare environment: compile dependencies.
-
+- experiments: the retrieve intermediate data generated during the experiment.
+- tools: tools to compute top rate.
 
 # Run
 To run the code in examples, you should call `setup.m` firstly.

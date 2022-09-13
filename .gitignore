@@ -20,6 +20,7 @@ data
 !/data/HM25
 *.mat
 *.csv
+!/experiments/HM25/*/*.csv
 *test.m*
 .idea
 *tests.m*
